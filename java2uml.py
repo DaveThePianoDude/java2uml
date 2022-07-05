@@ -3,6 +3,9 @@ import argparse
 import sys
 from bisect import bisect
 
+def prune(word, char):
+    return word.split(char)[0]
+
 def getRelations(relations):
     if (sys.argv[1] == '.'):
         for root, dir, files in os.walk(sys.argv[1]):
@@ -17,8 +20,10 @@ def getRelations(relations):
                                 for word in words:
                                     if word == sys.argv[2]:
                                         target_ind = ind+1
-                                        print(words[target_ind])
-                                        tuple = name, words[target_ind]
+                                        #print(words[target_ind])
+                                        name = prune(name,'.')
+                                        word = prune(words[target_ind],'<')
+                                        tuple = name, word
                                         relations.add(tuple)
                                     ind +=1
                         except Exception as e:
