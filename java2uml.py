@@ -3,16 +3,11 @@ import argparse
 import sys
 from bisect import bisect
 
-
-if __name__ == '__main__':
-
-    relations = set()
-
+def getRelations(relations):
     if (sys.argv[1] == '.'):
         for root, dir, files in os.walk(sys.argv[1]):
             for name in files:
                 if '.java' in name:
-                    #print(os.path.join(root,name))
                     with open(os.path.join(root,name), "r") as in_file:
                         try:
                             for line in in_file:
@@ -28,10 +23,34 @@ if __name__ == '__main__':
                                     ind +=1
                         except Exception as e:
                             print(e)
-    print (sys.getsizeof(relations))
-    result = {}
-    for tuple in relations:
-        print(tuple)
-        result[tuple[0]] = tuple[1]
-    for entry in sorted(result.items()):
-        print(entry)
+
+def writeGviz(relations, outfile):
+    with open(os.path.join(outfile), "w") as out_file:
+        try:
+            out_file.write("digraph unix {\n")
+            out_file.write("	fontname='Helvetica,Arial,sans-serif'\n")
+            out_file.write("node [fontname='Helvetica,Arial,sans-serif']\n")
+            out_file.write("edge [fontname='Helvetica,Arial,sans-serif']\n")
+            out_file.write("node [color=lightblue2, style=filled];\n")
+
+            result = {}
+            for tuple in relations:
+                result[tuple[0]] = tuple[1]
+            for entry in sorted(result.items()):
+                print(entry)
+
+            for entry in sorted(result.items()):
+                out_file.write("\""+ str(entry[0]) + "\"" + "->" + "\"" + str(entry[1] + "\"\n"))
+
+            out_file.write("}")
+        except Exception as e:
+            print(e)
+
+
+if __name__ == '__main__':
+
+    relations = set()
+
+    getRelations(relations)
+
+    writeGviz(relations, "output.gv")
