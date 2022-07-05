@@ -6,7 +6,7 @@ from bisect import bisect
 def prune(word, char):
     return word.split(char)[0]
 
-def getRelations(relations):
+def getRelations(relations, relation):
     if (sys.argv[1] == '.'):
         for root, dir, files in os.walk(sys.argv[1]):
             for name in files:
@@ -18,12 +18,11 @@ def getRelations(relations):
                                 ind = 0
                                 target_ind = 0
                                 for word in words:
-                                    if word == sys.argv[2]:
+                                    if word == relation:
                                         target_ind = ind+1
-                                        #print(words[target_ind])
                                         name = prune(name,'.')
                                         word = prune(words[target_ind],'<')
-                                        tuple = name, word
+                                        tuple = name, word, relation
                                         relations.add(tuple)
                                     ind +=1
                         except Exception as e:
@@ -33,19 +32,22 @@ def writeGviz(relations, outfile):
     with open(os.path.join(outfile), "w") as out_file:
         try:
             out_file.write("digraph unix {\n")
-            out_file.write("	fontname='Helvetica,Arial,sans-serif'\n")
-            out_file.write("node [fontname='Helvetica,Arial,sans-serif']\n")
-            out_file.write("edge [fontname='Helvetica,Arial,sans-serif']\n")
+            out_file.write("	fontname=\"Helvetica,Arial,sans-serif\"\n")
+            out_file.write("node [fontname=\"Helvetica,Arial,sans-serif\"]\n")
+            out_file.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
             out_file.write("node [color=lightblue2, style=filled];\n")
 
             result = {}
             for tuple in relations:
-                result[tuple[0]] = tuple[1]
+                result[tuple[0]] = str(tuple[1]) + " " + str(tuple[2])
             for entry in sorted(result.items()):
                 print(entry)
 
             for entry in sorted(result.items()):
-                out_file.write("\""+ str(entry[0]) + "\"" + "->" + "\"" + str(entry[1] + "\"\n"))
+                try:
+                    out_file.write("\""+ str(entry[0]) + "\"" + "->" + "\"" + str(entry[1]).split(" ")[0] + "\" [ label = \"" + str(entry[1]).split(" ")[1] + "\" ];\n")
+                except Exception as e:
+                    print(e)
 
             out_file.write("}")
         except Exception as e:
@@ -56,6 +58,7 @@ if __name__ == '__main__':
 
     relations = set()
 
-    getRelations(relations)
+    getRelations(relations, "implements")
+    getRelations(relations, "extends")
 
     writeGviz(relations, "output.gv")
