@@ -21,10 +21,18 @@ def getRelations(relations, relation):
                                     if word == relation:
                                         target_ind = ind+1
                                         name = prune(name,'.')
-                                        word = prune(words[target_ind],'<')
-                                        tuple = name, word, relation
-                                        relations.add(tuple)
-                                    ind +=1
+                                        while True:
+                                            repeater = False
+                                            word = prune(words[target_ind],'<')
+                                            if (words[target_ind][:-1] == ','):
+                                                repeater = True
+                                            word = prune(words[target_ind],',')
+                                            tuple = name, word, relation
+                                            relations.add(tuple)
+                                            ind +=1
+                                            if repeater == False:
+                                                break;
+                                    ind += 1
                         except Exception as e:
                             print(e)
 
@@ -40,8 +48,8 @@ def writeGviz(relations, outfile):
             result = {}
             for tuple in relations:
                 result[tuple[0]] = str(tuple[1]) + " " + str(tuple[2])
-            for entry in sorted(result.items()):
-                print(entry)
+            #for entry in sorted(result.items()):
+                #print(entry)
 
             for entry in sorted(result.items()):
                 try:
@@ -60,5 +68,5 @@ if __name__ == '__main__':
 
     getRelations(relations, "implements")
     getRelations(relations, "extends")
-
     writeGviz(relations, "output.gv")
+    print("DONE")
