@@ -28,8 +28,11 @@ def getRelations(relations, relation):
                                             if (words[target_ind][:-1] == ','):
                                                 repeater = True
                                             word = prune(words[target_ind],',')
+                                            word = prune(words[target_ind],')')
+                                            word = prune(words[target_ind],'(')
                                             tuple = name, word, relation
-                                            relations.add(tuple)
+                                            if (name != word and word != word.lower()): #ensure non-class tokens are discarded
+                                                relations.add(tuple)
                                             ind +=1
                                             if repeater == False:
                                                 break;
@@ -70,5 +73,6 @@ if __name__ == '__main__':
 
     getRelations(relations, "implements")
     getRelations(relations, "extends")
+    getRelations(relations, "new") # a.k.a, "uses"
     writeGviz(relations, "output.gv")
     print("DONE")
