@@ -19,6 +19,7 @@ def getRelations(relations, relation):
                                 target_ind = 0
                                 for word in words:
                                     if word == relation:
+                                        print(line)
                                         target_ind = ind+1
                                         name = prune(name,'.')
                                         while True:
@@ -40,6 +41,7 @@ def writeGviz(relations, outfile):
     with open(os.path.join(outfile), "w") as out_file:
         try:
             out_file.write("digraph unix {\n")
+            out_file.write("rankdir=\"LR\"\n")
             out_file.write("	fontname=\"Helvetica,Arial,sans-serif\"\n")
             out_file.write("node [fontname=\"Helvetica,Arial,sans-serif\"]\n")
             out_file.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
@@ -60,6 +62,7 @@ def writeGviz(relations, outfile):
             out_file.write("}")
         except Exception as e:
             print(e)
+
 
 if __name__ == '__main__':
 
